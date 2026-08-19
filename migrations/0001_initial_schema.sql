@@ -1,6 +1,6 @@
--- Saraya Al-Andalus Hospitality Furniture - Initial Schema
+-- Saraya Aluminum: initial schema
 
--- Admin users with roles (RBAC)
+-- Admin users
 CREATE TABLE IF NOT EXISTS admin_users (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   username TEXT UNIQUE NOT NULL,
@@ -20,9 +20,9 @@ CREATE TABLE IF NOT EXISTS admin_sessions (
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (user_id) REFERENCES admin_users(id)
 );
-CREATE INDEX IF NOT EXISTS idx_sessions_user ON admin_sessions(user_id);
+CREATE INDEX IF NOT EXISTS idx_sessions_expires ON admin_sessions(expires_at);
 
--- Categories (hierarchical)
+-- Categories
 CREATE TABLE IF NOT EXISTS categories (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   slug TEXT UNIQUE NOT NULL,
@@ -33,19 +33,18 @@ CREATE TABLE IF NOT EXISTS categories (
   image TEXT,
   icon TEXT,
   parent_id INTEGER,
-  sort_order INTEGER DEFAULT 0,
+  sort_order INTEGER NOT NULL DEFAULT 0,
   active INTEGER NOT NULL DEFAULT 1,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (parent_id) REFERENCES categories(id)
 );
+CREATE INDEX IF NOT EXISTS idx_categories_slug ON categories(slug);
 CREATE INDEX IF NOT EXISTS idx_categories_parent ON categories(parent_id);
 
 -- Products
 CREATE TABLE IF NOT EXISTS products (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   slug TEXT UNIQUE NOT NULL,
-  sku TEXT,
   name_ar TEXT NOT NULL,
   name_en TEXT,
   short_desc_ar TEXT,
@@ -54,37 +53,32 @@ CREATE TABLE IF NOT EXISTS products (
   description_en TEXT,
   category_id INTEGER,
   main_image TEXT,
-  specifications TEXT, -- JSON: [{key_ar,key_en,value_ar,value_en}]
-  materials_ar TEXT,
-  materials_en TEXT,
-  dimensions TEXT,
-  features_ar TEXT, -- newline separated
-  features_en TEXT,
+  specs TEXT,               -- JSON: [{label_ar, value_ar}]
+  colors TEXT,              -- JSON: ["أبيض","أسود"]
   price REAL,
   show_price INTEGER NOT NULL DEFAULT 0,
   featured INTEGER NOT NULL DEFAULT 0,
   is_new INTEGER NOT NULL DEFAULT 0,
   is_offer INTEGER NOT NULL DEFAULT 0,
-  status TEXT NOT NULL DEFAULT 'draft', -- draft | published | archived
-  seo_title TEXT,
-  seo_description TEXT,
+  status TEXT NOT NULL DEFAULT 'published', -- published | draft | archived
+  sort_order INTEGER NOT NULL DEFAULT 0,
   views INTEGER NOT NULL DEFAULT 0,
-  sort_order INTEGER DEFAULT 0,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (category_id) REFERENCES categories(id)
 );
+CREATE INDEX IF NOT EXISTS idx_products_slug ON products(slug);
 CREATE INDEX IF NOT EXISTS idx_products_category ON products(category_id);
 CREATE INDEX IF NOT EXISTS idx_products_status ON products(status);
 
--- Product images (gallery)
+-- Product gallery images
 CREATE TABLE IF NOT EXISTS product_images (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   product_id INTEGER NOT NULL,
   url TEXT NOT NULL,
   alt_ar TEXT,
   alt_en TEXT,
-  sort_order INTEGER DEFAULT 0,
+  sort_order INTEGER NOT NULL DEFAULT 0,
   FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
 );
 CREATE INDEX IF NOT EXISTS idx_product_images ON product_images(product_id);
@@ -101,17 +95,13 @@ CREATE TABLE IF NOT EXISTS services (
   description_en TEXT,
   image TEXT,
   icon TEXT,
-  features_ar TEXT,
-  features_en TEXT,
-  sort_order INTEGER DEFAULT 0,
+  features_ar TEXT,         -- JSON array
+  sort_order INTEGER NOT NULL DEFAULT 0,
   active INTEGER NOT NULL DEFAULT 1,
-  seo_title TEXT,
-  seo_description TEXT,
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
--- Projects
+-- Projects (portfolio)
 CREATE TABLE IF NOT EXISTS projects (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   slug TEXT UNIQUE NOT NULL,
@@ -122,13 +112,12 @@ CREATE TABLE IF NOT EXISTS projects (
   cover_image TEXT,
   client TEXT,
   location TEXT,
-  project_type TEXT, -- hotels | resorts | restaurants | cafes | commercial | other
+  project_type TEXT,        -- residential | commercial | governmental
   project_date TEXT,
   featured INTEGER NOT NULL DEFAULT 0,
-  status TEXT NOT NULL DEFAULT 'draft',
-  sort_order INTEGER DEFAULT 0,
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  status TEXT NOT NULL DEFAULT 'published',
+  sort_order INTEGER NOT NULL DEFAULT 0,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS project_images (
@@ -137,15 +126,42 @@ CREATE TABLE IF NOT EXISTS project_images (
   url TEXT NOT NULL,
   caption_ar TEXT,
   caption_en TEXT,
-  sort_order INTEGER DEFAULT 0,
+  sort_order INTEGER NOT NULL DEFAULT 0,
   FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE
+);
+
+-- Home sections (hero slides / banners)
+CREATE TABLE IF NOT EXISTS home_sections (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  section_type TEXT NOT NULL DEFAULT 'hero', -- hero | banner
+  title_ar TEXT,
+  title_en TEXT,
+  subtitle_ar TEXT,
+  subtitle_en TEXT,
+  image TEXT,
+  cta_text_ar TEXT,
+  cta_link TEXT,
+  sort_order INTEGER NOT NULL DEFAULT 0,
+  active INTEGER NOT NULL DEFAULT 1
+);
+
+-- Why us items
+CREATE TABLE IF NOT EXISTS why_us_items (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  icon TEXT,
+  title_ar TEXT NOT NULL,
+  title_en TEXT,
+  description_ar TEXT,
+  description_en TEXT,
+  sort_order INTEGER NOT NULL DEFAULT 0,
+  active INTEGER NOT NULL DEFAULT 1
 );
 
 -- Leads (quote requests + contact messages)
 CREATE TABLE IF NOT EXISTS leads (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   request_id TEXT UNIQUE NOT NULL,
-  type TEXT NOT NULL DEFAULT 'quote', -- quote | contact
+  type TEXT NOT NULL DEFAULT 'quote',  -- quote | contact
   name TEXT NOT NULL,
   company TEXT,
   phone TEXT NOT NULL,
@@ -158,61 +174,22 @@ CREATE TABLE IF NOT EXISTS leads (
   product_name TEXT,
   message TEXT,
   source TEXT DEFAULT 'website',
-  status TEXT NOT NULL DEFAULT 'new', -- new|contacted|qualified|quotation_sent|negotiation|won|lost|archived
+  status TEXT NOT NULL DEFAULT 'new',  -- new | contacted | quoted | won | lost
+  assigned_to INTEGER,
   notes TEXT,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 CREATE INDEX IF NOT EXISTS idx_leads_status ON leads(status);
-CREATE INDEX IF NOT EXISTS idx_leads_type ON leads(type);
+CREATE INDEX IF NOT EXISTS idx_leads_created ON leads(created_at);
 
--- Lead notes/timeline
-CREATE TABLE IF NOT EXISTS lead_notes (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  lead_id INTEGER NOT NULL,
-  user_id INTEGER,
-  note TEXT NOT NULL,
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (lead_id) REFERENCES leads(id) ON DELETE CASCADE
-);
-
--- Site settings (key-value)
+-- Site settings (key/value)
 CREATE TABLE IF NOT EXISTS settings (
   key TEXT PRIMARY KEY,
-  value TEXT,
-  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  value TEXT
 );
 
--- Homepage sections config
-CREATE TABLE IF NOT EXISTS home_sections (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  section_key TEXT UNIQUE NOT NULL, -- hero|about|categories|featured|services|projects|why_us|cta
-  title_ar TEXT,
-  title_en TEXT,
-  content_ar TEXT,
-  content_en TEXT,
-  image TEXT,
-  cta_text_ar TEXT,
-  cta_text_en TEXT,
-  cta_url TEXT,
-  sort_order INTEGER DEFAULT 0,
-  active INTEGER NOT NULL DEFAULT 1,
-  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-);
-
--- Why choose us items
-CREATE TABLE IF NOT EXISTS why_us_items (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  icon TEXT,
-  title_ar TEXT NOT NULL,
-  title_en TEXT,
-  description_ar TEXT,
-  description_en TEXT,
-  sort_order INTEGER DEFAULT 0,
-  active INTEGER NOT NULL DEFAULT 1
-);
-
--- Audit log
+-- Audit logs
 CREATE TABLE IF NOT EXISTS audit_logs (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   user_id INTEGER,
