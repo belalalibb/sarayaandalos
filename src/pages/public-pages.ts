@@ -123,7 +123,7 @@ export const productDetailPage = `
 <section id="product-detail" class="max-w-7xl mx-auto px-4 py-10">
   <nav id="product-breadcrumb" class="text-sm text-gray-500 mb-6"></nav>
   <div id="product-content" class="grid lg:grid-cols-2 gap-10">
-    <div class="text-center py-20 text-gray-400 col-span-2"><i class="fas fa-spinner fa-spin text-3xl"></i></div>
+    <div class="text-center py-20 text-gray-400 lg:col-span-2"><i class="fas fa-spinner fa-spin text-3xl"></i></div>
   </div>
   <section id="related-section" class="mt-16 hidden">
     <h2 class="text-2xl font-black text-brand-800 mb-6">منتجات مشابهة</h2>
