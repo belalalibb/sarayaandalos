@@ -1,6 +1,6 @@
--- Saraya Aluminum initial schema
+-- Saraya Aluminum - Initial Schema
 
--- Admin users with roles
+-- Admin users with role-based access
 CREATE TABLE IF NOT EXISTS users (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   username TEXT UNIQUE NOT NULL,
@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS users (
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
--- Sessions
+-- Sessions (opaque token based)
 CREATE TABLE IF NOT EXISTS sessions (
   token TEXT PRIMARY KEY,
   user_id INTEGER NOT NULL,
@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS sessions (
   FOREIGN KEY (user_id) REFERENCES users(id)
 );
 CREATE INDEX IF NOT EXISTS idx_sessions_user ON sessions(user_id);
+CREATE INDEX IF NOT EXISTS idx_sessions_expires ON sessions(expires_at);
 
 -- Product categories
 CREATE TABLE IF NOT EXISTS categories (
@@ -29,8 +30,7 @@ CREATE TABLE IF NOT EXISTS categories (
   name_ar TEXT NOT NULL,
   icon TEXT DEFAULT 'fas fa-box',
   image_url TEXT,
-  sort_order INTEGER DEFAULT 0,
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  sort_order INTEGER DEFAULT 0
 );
 
 -- Products
@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS products (
   name_ar TEXT NOT NULL,
   short_desc_ar TEXT,
   description_ar TEXT,
-  features_ar TEXT, -- JSON array of strings
+  features_ar TEXT DEFAULT '[]',
   image_url TEXT,
   is_featured INTEGER DEFAULT 0,
   status TEXT NOT NULL DEFAULT 'published' CHECK (status IN ('published','draft','archived')),
@@ -60,8 +60,7 @@ CREATE TABLE IF NOT EXISTS services (
   description_ar TEXT,
   icon TEXT DEFAULT 'fas fa-screwdriver-wrench',
   sort_order INTEGER DEFAULT 0,
-  is_active INTEGER DEFAULT 1,
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  is_active INTEGER DEFAULT 1
 );
 
 -- Projects (portfolio)
@@ -74,8 +73,7 @@ CREATE TABLE IF NOT EXISTS projects (
   image_url TEXT,
   year INTEGER,
   is_featured INTEGER DEFAULT 0,
-  sort_order INTEGER DEFAULT 0,
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  sort_order INTEGER DEFAULT 0
 );
 
 -- Leads (quote requests + contact messages)
@@ -95,7 +93,7 @@ CREATE TABLE IF NOT EXISTS leads (
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 CREATE INDEX IF NOT EXISTS idx_leads_status ON leads(status);
-CREATE INDEX IF NOT EXISTS idx_leads_type ON leads(lead_type);
+CREATE INDEX IF NOT EXISTS idx_leads_created ON leads(created_at);
 
 -- Site settings (key/value)
 CREATE TABLE IF NOT EXISTS settings (
