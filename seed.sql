@@ -1,63 +1,66 @@
--- Seed data for Saraya Aluminum
+-- Saraya Aluminum seed data
 
--- Admin users (passwords: admin=Admin@2024, content=Content@2024, sales=Sales@2024)
-INSERT OR IGNORE INTO users (username, password_hash, salt, display_name, role) VALUES
-  ('admin', '6485b80dab9764279dc81a411943c67dbc526c02c796a43e95c82e6a2ebe6895', '6da9bf7ce10e36a28e40abe8a89ffd30', 'المدير العام', 'super_admin'),
-  ('content', '42696d258137d31c7ebd91a89d73b0e2e1fec12aeea564ac4695f718c2821eff', '810cf31fbb92efd4e9b90b03cfe0d52b', 'مدير المحتوى', 'content_manager'),
-  ('sales', '596e535cd912c2616cd7892bcb90f6f6672a441eefb80356c67dfa6b9cb56d54', '8a76b82f87f591fd0fbb3146b6c41b68', 'مسؤول المبيعات', 'sales');
-
--- Categories
-INSERT OR IGNORE INTO categories (id, slug, name_ar, icon, image_url, sort_order) VALUES
-  (1, 'windows', 'النوافذ', 'fas fa-window-restore', 'https://sspark.genspark.ai/cfimages?u1=8A%2BzLwRTGnUI4l535rmejOZ4UyU1XZoQDdIrHdt2JsEsMfIWhrGojJn2Wp4wB3mv7b79J29hn38Qv7RhKOvpqaomSM8HsK7A6wkaoFFHKG1iA0KSfiW5N%2Fdod%2FJrh7rhAoXg&u2=Q8ZnbqNT%2BqeItzQP&width=2560', 1),
-  (2, 'doors', 'الأبواب', 'fas fa-door-open', 'https://sspark.genspark.ai/cfimages?u1=BbcWGABihbDWM1GzVCaozDG%2BfNGbRnlTUFTXwrtPKMp1LzQA1Nv3eEWTqsJWshRzGymnSLzs%2Bv%2F50NeiP0jcOVgWznIG3LWs7QaRfjeSb%2BlXpWPVF7MEPg%3D%3D&u2=7OvAZl2HlzJHm7VI&width=2560', 2),
-  (3, 'facades', 'الواجهات الزجاجية', 'fas fa-building', 'https://sspark.genspark.ai/cfimages?u1=%2BlVxX1hkZzgkBMsnRLsW7Cm2WvVZ3sZxyzAaYxTFXoZr00q%2FYEI7%2BWGLYQiu9B4D2pVY8bKnqJPFrNBrLoufGjkN8VWwF6R4b7HVY2p%2Bg5%2FpwGbX4oaUJUL2PxL8ycnVJ1ysqHczCqS9ptW6H%2FPJ2ygNUY4s0qH75PRLp4J6ZnDhClzMwoCwiH0ytytF6%2B0%2Bh4LTXKe5lyRrRnR8SZj4ey%2F%2Baw3T9ggztcf%2FrtDfz1pm%2FYAaesiGdBKYj%2FPHJ0GT2yFe9OXvwHsd%2F%2B3VS%2FbD2AtFlRzdRzm3qMFc1EFeKRqu1JZEdhyH&u2=ozZPoFY4yfsU4vcz&width=2560', 3),
-  (4, 'kitchens', 'مطابخ الألمنيوم', 'fas fa-kitchen-set', 'https://sspark.genspark.ai/cfimages?u1=428Gd5b3COV4Tef5IxualSWFGImD%2BBJPvzlkfA%2B6rTV30327rAimDS7DbcLRCjYRsizSqljoIXYDMiFxFlWD2CLcz%2FCr%2BUuuSrpHkbIcVsOnOu3ytLeeGm%2B%2FwSUV%2FNV3ZsvELLNG%2FCryADF6HIoRtat882U%3D&u2=Fuicur9nlq25DfaV&width=2560', 4),
-  (5, 'railings', 'الدرابزين والهاندريل', 'fas fa-stairs', 'https://sspark.genspark.ai/cfimages?u1=sKH%2BbWTHAhKJVirXUkY1G1yhJJ3SOkg5D1bH9v4JMtVvRX6mYg2t8CjlOe%2FbAupifOA5Bbxb3mrAwz1K65HvVt2oYO16%2FeIRtHuJZcEdyt3OMq5nYhnHb1H2HgpmbDzTSZL97EYm3VMXu8%2Bf%2B3BgXBoYdPMEOW6woQW3Nr9BSZxkt83QikxRhuOAk%2FjIUg0B%2BpsjLksDWgk%3D&u2=wsCjXXdcEimlsPKJ&width=2560', 5),
-  (6, 'pergolas', 'البرجولات والمظلات', 'fas fa-umbrella-beach', 'https://sspark.genspark.ai/cfimages?u1=jSwWvLwRFXCb0md%2FOPW9G34jB7%2FIASV6fQE3c1CkPBlFFOQPI4DTNBsCKQEY%2BBDx2eR2tI8qOdMh1ijcqNmzEd7t9a5dhve12SPsyCcjtq7Y8ERI9lPnCmU9Q4bUFB92E1xB9bY0zKNknZAeoJ6NnYOEe5%2F3AZ2oj3M5X7xyozcGOrX7%2BrM%3D&u2=eXH3cDrDBSHuxKsK&width=2560', 6),
-  (7, 'showers', 'كبائن الاستحمام', 'fas fa-shower', 'https://sspark.genspark.ai/cfimages?u1=6OEVCLNl9Mu%2FEzkqhS%2FlqeJtwD8Q2pCPe0iMe3F1LRPmA6mM5vv5OUChB50X6ylfKnnHSfjBTEnAhylfEHUgiyc4t1mvNuINAfxQUMxLDVPQjOAnP2YlAclCWsgpsMAOB%2BTm%2B2Bz3OyKTCVXe4EUS959bKs1%2BOPfaOscH%2BRGdA%2BNLIr2wBzW8vHAD%2BRLdgb5NvWU1GE%3D&u2=ZHbOSwN%2B%2FWdkSo8K&width=2560', 7),
-  (8, 'sliding', 'الأبواب الجرارة', 'fas fa-arrows-left-right', 'https://sspark.genspark.ai/cfimages?u1=37PABwcMGB0xALVpazm9JHloLzHwMusM97RrWhuSgsCBP2Iunn5qJJ2kLRc1gennqanG4hHpqk8opry98TkUHjgPYdVndYA69eaQGuW0SqbgJFmvquY3TQsIhST8Lo9Spl0U6S0%3D&u2=sL5hd5%2FgxXE7zZx7&width=2560', 8);
-
--- Products
-INSERT OR IGNORE INTO products (id, slug, category_id, name_ar, short_desc_ar, description_ar, features_ar, image_url, is_featured, status, sort_order) VALUES
-  (1, 'thermal-break-windows', 1, 'نوافذ ألمنيوم عازلة (ثيرمال بريك)', 'نوافذ بتقنية القطع الحراري لعزل ممتاز للحرارة والصوت', 'نوافذ ألمنيوم بتقنية الثيرمال بريك (القطع الحراري) توفر عزلاً حرارياً وصوتياً فائقاً، مثالية للمناخ السعودي الحار. تتوفر بألوان وتشطيبات متعددة مع زجاج مزدوج أو ثلاثي.', '["عزل حراري يخفض استهلاك الكهرباء حتى 40%","عزل صوتي ممتاز","زجاج مزدوج 24 مم","مقاومة للأتربة والعواصف الرملية","ضمان 15 سنة على القطاعات","ألوان وتشطيبات متعددة"]', 'https://sspark.genspark.ai/cfimages?u1=8A%2BzLwRTGnUI4l535rmejOZ4UyU1XZoQDdIrHdt2JsEsMfIWhrGojJn2Wp4wB3mv7b79J29hn38Qv7RhKOvpqaomSM8HsK7A6wkaoFFHKG1iA0KSfiW5N%2Fdod%2FJrh7rhAoXg&u2=Q8ZnbqNT%2BqeItzQP&width=2560', 1, 'published', 1),
-  (2, 'sliding-windows', 1, 'نوافذ سحب (جرارة)', 'نوافذ سحب عملية وأنيقة بمساحات زجاجية واسعة', 'نوافذ ألمنيوم سحب (جرارة) بتصميم عصري نحيف يوفر إطلالة واسعة وإضاءة طبيعية ممتازة، مع أنظمة إغلاق محكمة ضد الأتربة.', '["قطاعات نحيفة بتصميم عصري","انزلاق سلس وهادئ","شبك حماية ضد الحشرات","سهولة التنظيف والصيانة","خيارات زجاج متعددة"]', 'https://sspark.genspark.ai/cfimages?u1=3qrWe2WqC2buJm4RGdg3UoODchFCz79xLyCNOyvmtGjO%2Fg7R7xDRuXiuRT1l04czpeS9J8633Sa9qUlN7AfXMEJAWABj%2F6yC9FTKr1AMYz1p&u2=OlGfpwvJkeEhiryu&width=2560', 1, 'published', 2),
-  (3, 'entrance-doors', 2, 'أبواب مداخل فاخرة', 'أبواب ألمنيوم مصبوب للفلل والقصور بتصاميم راقية', 'أبواب مداخل رئيسية من الألمنيوم المصبوب والمشغول بتصاميم فاخرة تناسب الفلل والقصور، مع أنظمة أمان متقدمة وتشطيبات مقاومة للعوامل الجوية.', '["تصاميم فاخرة حسب الطلب","أنظمة قفل متعددة النقاط","مقاومة للصدأ والتآكل","عزل حراري وصوتي","إمكانية إضافة القفل الذكي"]', 'https://sspark.genspark.ai/cfimages?u1=BbcWGABihbDWM1GzVCaozDG%2BfNGbRnlTUFTXwrtPKMp1LzQA1Nv3eEWTqsJWshRzGymnSLzs%2Bv%2F50NeiP0jcOVgWznIG3LWs7QaRfjeSb%2BlXpWPVF7MEPg%3D%3D&u2=7OvAZl2HlzJHm7VI&width=2560', 1, 'published', 3),
-  (4, 'sliding-doors', 8, 'أبواب سحب بانورامية', 'أبواب جرارة بفتحات واسعة تصل حتى 6 أمتار', 'أبواب سحب بانورامية بقطاعات ألمنيوم قوية تتحمل الفتحات الكبيرة، مثالية للمجالس والصالات المطلة على الحدائق والمسابح.', '["فتحات تصل حتى 6 أمتار","نظام انزلاق ألماني فاخر","زجاج سيكوريت مزدوج","إغلاق محكم ضد الأتربة","خيار الفتح الآلي"]', 'https://sspark.genspark.ai/cfimages?u1=37PABwcMGB0xALVpazm9JHloLzHwMusM97RrWhuSgsCBP2Iunn5qJJ2kLRc1gennqanG4hHpqk8opry98TkUHjgPYdVndYA69eaQGuW0SqbgJFmvquY3TQsIhST8Lo9Spl0U6S0%3D&u2=sL5hd5%2FgxXE7zZx7&width=2560', 1, 'published', 4),
-  (5, 'curtain-walls', 3, 'واجهات كرتن وول', 'واجهات زجاجية هيكلية للأبراج والمباني التجارية', 'واجهات زجاجية معمارية (كرتن وول) بأنظمة عالمية معتمدة، ننفذها للأبراج والمباني التجارية والإدارية مع حسابات هندسية دقيقة لمقاومة الرياح.', '["أنظمة Stick و Unitized","زجاج عاكس وموفر للطاقة","حسابات هندسية معتمدة","فريق تركيب متخصص","صيانة دورية"]', 'https://sspark.genspark.ai/cfimages?u1=6oANo4j1H6gJ0gPvNqz2Wk2%2BadMU6GOai5KOddzXWqdbD8JE9%2FZSFrASxJxZX0okcFgqJS76yYhc%2Fb8whcsH6%2BWD1r6v9gXercUb4ymspEoCaBHklCXBFqia1HgFzVb88ovjxyCl%2FeL9Yi72rjV2NGh2s26wtOeIKSICDMGt90EbBo1Yxg%3D%3D&u2=tgk%2BGzFM%2F4hugHHi&width=2560', 1, 'published', 5),
-  (6, 'aluminum-kitchens', 4, 'مطابخ ألمنيوم عصرية', 'مطابخ ألمنيوم مقاومة للماء والحرارة بتصاميم عصرية', 'مطابخ ألمنيوم كاملة مقاومة للماء والحرارة والحشرات، بتصاميم عصرية وألوان متعددة، مع إكسسوارات وأرفف داخلية عالية الجودة.', '["مقاومة كاملة للماء والرطوبة","لا تتأثر بالحرارة","ألوان وتشطيبات خشبية","إكسسوارات إيطالية","تفصيل حسب المساحة","ضمان 10 سنوات"]', 'https://sspark.genspark.ai/cfimages?u1=cwgXbNilfFEUzE%2BbMPSnvVspCV2ACw9MWQeuvkMIQ2wBpboxuopwMXiYmugiU8TbxuLqECh1mSG1nu38hgXpqE6vs8fEjG7RJIn7bC5lAS3YPDJ9%2FgXUTC%2Byu0T6F5Al9rW4i2STlT89QptYYmcUKNFk7v64YgmyYqllKxUqfF2uIDg%3D&u2=n0HmlDm5yMweXzzO&width=2560', 1, 'published', 6),
-  (7, 'glass-railings', 5, 'درابزين زجاجي', 'درابزين زجاج سيكوريت مع ستانلس ستيل للأدراج والبلكونات', 'درابزين زجاجي فاخر بزجاج سيكوريت 10-12 مم مع قواعد ومقابض ستانلس ستيل 316، للأدراج الداخلية والبلكونات والمسابح.', '["زجاج سيكوريت مقسى 10-12 مم","ستانلس ستيل 316 ضد الصدأ","تصاميم بدون إطار (فريم لس)","مطابق لاشتراطات السلامة","تركيب احترافي"]', 'https://sspark.genspark.ai/cfimages?u1=sKH%2BbWTHAhKJVirXUkY1G1yhJJ3SOkg5D1bH9v4JMtVvRX6mYg2t8CjlOe%2FbAupifOA5Bbxb3mrAwz1K65HvVt2oYO16%2FeIRtHuJZcEdyt3OMq5nYhnHb1H2HgpmbDzTSZL97EYm3VMXu8%2Bf%2B3BgXBoYdPMEOW6woQW3Nr9BSZxkt83QikxRhuOAk%2FjIUg0B%2BpsjLksDWgk%3D&u2=wsCjXXdcEimlsPKJ&width=2560', 0, 'published', 7),
-  (8, 'pergolas-louvers', 6, 'برجولات ألمنيوم متحركة', 'برجولات بشرائح متحركة للتحكم بالإضاءة والتهوية', 'برجولات ألمنيوم بشرائح متحركة يدوياً أو كهربائياً، مقاومة للأمطار والأتربة، مثالية للجلسات الخارجية والحدائق والأسطح.', '["شرائح متحركة يدوي أو كهربائي","مقاومة للأمطار مع تصريف مدمج","إضاءة LED مدمجة (اختياري)","ألوان خشبية وصلبة","تفصيل حسب المساحة"]', 'https://sspark.genspark.ai/cfimages?u1=iDywV9DeDi6DWQr%2BY6LdnOvWR1pVN8P1uUgrsaB6xeWbMH%2Fy9VnWBtPqzerQwUUrQt1dSKrBVlnqN8ifHbwIHawBUZ9Bm0kTQf3wakj%2BKsgFmnmhHe%2FRijwt%2BvS%2FugjbPxAMXiVd%2FN77NEGu6mFvwkZfDoswIb1xEYYqjZ78nF8yCygqwyc5wr13JNYvWALcfvUq76ayIQ%3D%3D&u2=%2FpnMpQ8q5yd7fCq7&width=2560', 1, 'published', 8),
-  (9, 'shower-cabins', 7, 'كبائن استحمام زجاجية', 'كبائن شاور بزجاج سيكوريت وتصاميم بدون إطار', 'كبائن استحمام بزجاج سيكوريت 8-10 مم بتصاميم فريم لس عصرية، مع مفصلات وإكسسوارات مقاومة للماء والصدأ.', '["زجاج سيكوريت 8-10 مم","تصاميم بدون إطار","إكسسوارات ضد الصدأ","طلاء نانو ضد الترسبات","تفصيل حسب الحمام"]', 'https://sspark.genspark.ai/cfimages?u1=6OEVCLNl9Mu%2FEzkqhS%2FlqeJtwD8Q2pCPe0iMe3F1LRPmA6mM5vv5OUChB50X6ylfKnnHSfjBTEnAhylfEHUgiyc4t1mvNuINAfxQUMxLDVPQjOAnP2YlAclCWsgpsMAOB%2BTm%2B2Bz3OyKTCVXe4EUS959bKs1%2BOPfaOscH%2BRGdA%2BNLIr2wBzW8vHAD%2BRLdgb5NvWU1GE%3D&u2=ZHbOSwN%2B%2FWdkSo8K&width=2560', 0, 'published', 9),
-  (10, 'casement-windows', 1, 'نوافذ مفصلية (قلاب)', 'نوافذ تفتح للداخل أو الخارج بإحكام تام', 'نوافذ ألمنيوم مفصلية تفتح بزاوية كاملة مع إغلاق محكم متعدد النقاط، الخيار الأمثل لغرف النوم والمكاتب.', '["إغلاق محكم متعدد النقاط","فتح قلاب علوي للتهوية","مناسبة للمكيفات الاسبليت","عزل ممتاز"]', 'https://sspark.genspark.ai/cfimages?u1=eSK7GNebCVYinQxIu8joSDg6Np3trAeVOPyVP%2BrViuDrXzADMmzYmBw7u40CgavGejhL0cPwNCfj8S8vuixbC3ltMrHJoZaSY6bALs0cShfs6aqE9SzN%2FCd2mdchVx8vgJ2341c%3D&u2=uK2jHGd%2Bko1T6Fn8&width=2560', 0, 'published', 10);
-
--- Services
-INSERT OR IGNORE INTO services (id, title_ar, description_ar, icon, sort_order) VALUES
-  (1, 'استشارة ورفع مقاسات مجاني', 'يزورك فريقنا الفني في الموقع لرفع المقاسات بدقة وتقديم الاستشارة الأنسب لاحتياجك وميزانيتك، بدون أي رسوم.', 'fas fa-ruler-combined', 1),
-  (2, 'تصميم وتصنيع حسب الطلب', 'نصنع في ورشنا المجهزة بأحدث المكائن جميع الأعمال حسب المقاسات والتصاميم المطلوبة وبخامات أوروبية معتمدة.', 'fas fa-industry', 2),
-  (3, 'تركيب احترافي', 'فرق تركيب مدربة تنجز العمل بدقة ونظافة تامة والتزام بالمواعيد، مع اختبارات جودة بعد التركيب.', 'fas fa-screwdriver-wrench', 3),
-  (4, 'صيانة وضمان', 'ضمان يصل إلى 15 سنة على القطاعات و10 سنوات على الإكسسوارات، مع خدمة صيانة دورية وسريعة.', 'fas fa-shield-halved', 4),
-  (5, 'توريد للمقاولين', 'أسعار خاصة وجداول توريد ملتزمة لمشاريع المقاولين والمطورين العقاريين بكميات كبيرة.', 'fas fa-truck-fast', 5);
-
--- Projects
-INSERT OR IGNORE INTO projects (id, title_ar, description_ar, city_ar, project_type, image_url, year, is_featured, sort_order) VALUES
-  (1, 'فيلا الياسمين الفاخرة', 'توريد وتركيب كامل النوافذ والأبواب بنظام ثيرمال بريك مع واجهة زجاجية للمجلس ودرابزين زجاجي للدرج الداخلي.', 'الرياض', 'residential', 'https://sspark.genspark.ai/cfimages?u1=k4tzmU%2BEE8%2BYD53lqPQrO6OWh6vXfFg0VwqSyd952F%2FxkxM2BvJCnJDo1wGwfBJqhTlueToooxfWByiBdaCA11cC1Iw%2B%2BASP6tNobyPF4Dwjbe5%2BrGXFTbWImSPgzXTEiKpYrx7vWGGCVcvN&u2=49rV46VQuQ3Eh40z&width=2560', 2025, 1, 1),
-  (2, 'برج المكاتب الذكية', 'تنفيذ واجهات كرتن وول بمساحة 4500 م² مع زجاج عاكس موفر للطاقة ومداخل زجاجية أوتوماتيكية.', 'جدة', 'commercial', 'https://sspark.genspark.ai/cfimages?u1=lBj7XD2Zg%2BVUGplxPkOWlE2sTJXiIPHtekKwHc24n7JMAC4Iu1siLb36YVFT4k9EqCI63fTccSzeoE6VjL%2FkF%2FS8pNiM%2BxLjyVF9T1cnUBPyeTw1x5V2qzOOv2xxV0FpzXAGAEOazfM4AQ%3D%3D&u2=X%2Fbx1xgHg%2Bv%2Fisyr&width=2560', 2024, 1, 2),
-  (3, 'مجمع فلل النرجس', 'مشروع 12 فيلا: نوافذ وأبواب ألمنيوم عازلة ومطابخ ألمنيوم كاملة وبرجولات للجلسات الخارجية.', 'الرياض', 'residential', 'https://sspark.genspark.ai/cfimages?u1=sc68I%2BFB0a68rJE9SqLQX%2FAgzJKy7%2F1IIEuHqJ8anSlff%2FqhSiteJ8x5%2BxgFiTX%2FfvZdIK96YNlYuiZt8RlohryC8vTixLdC8hMxhpob%2BT%2FcowpYFgaU%2FEpyclL10Eiw4P5uMZn6zrEPVTflkdE1n32EfWE4Eg%3D%3D&u2=YP7nmLx1kxD98Ds2&width=2560', 2024, 1, 3),
-  (4, 'مبنى إداري حكومي', 'توريد وتركيب واجهات زجاجية ونوافذ مقاومة للحريق مع أبواب طوارئ معتمدة حسب اشتراطات الدفاع المدني.', 'الدمام', 'governmental', 'https://sspark.genspark.ai/cfimages?u1=un9%2BNJrkXt%2BFBvsu2edNo%2B9aw5nx8Ys10z2YBBwZ%2Bs22iUml1eppsgH%2Fzzu38XMKMY9hEYkRD7bU9DCFKrWujVCGa73T71h4FrujcoYOnkFjG2OHyfIhK40QtQFRqk3Ja5bVlXR%2BTvDgS764OSv3AdQ1VIDBC62y&u2=TYqzmRta6gvBsPyI&width=2560', 2023, 1, 4),
-  (5, 'قصر الروابي', 'أعمال ألمنيوم فاخرة: أبواب مداخل مصبوبة، نوافذ بانورامية، وكبائن استحمام زجاجية لـ 8 حمامات.', 'الرياض', 'residential', 'https://sspark.genspark.ai/cfimages?u1=2Ylw7dR4zWXx3XTx2C3vEqo9z8mEh7wqnk%2BFFXQ2Yj6Sw%2B7jRko7mRl%2B9HUBzTLMTsHb1rHsFPGNhoRsm%2BFC9CmyMR330ioufZJLYGFqDYsyjymsGbOAgLwR1hBEdooaWm2KB3uaGc0dDWAqAvwi2QT%2FP%2F7hlLzxuvJz%2FjmvQHgq1JBpUxZJ3CaRBug%3D&u2=QVwWv7Vw4He%2FRV7S&width=2560', 2023, 0, 5),
-  (6, 'مطاعم الواجهة البحرية', 'واجهات زجاجية قابلة للفتح الكامل (فولدينق) لـ 6 مطاعم مطلة على الكورنيش مع مظلات ألمنيوم.', 'الخبر', 'commercial', 'https://sspark.genspark.ai/cfimages?u1=OpRA5e6q%2BkUXwIgHPQ1R%2FE%2FLwqeg5fg4PT1DDiUDTIHImG7wCcif9QQip%2FoDth3s9Yopp4eneqWR73MTbqZmcoyJ9wy1J93QK11LEVI1slHRw8TV2RgSjp04V8VUP6nS3MOyWwCcYQviQrsLgc2NAg%3D%3D&u2=%2BLRHPABQqY9IGk5c&width=2560', 2025, 0, 6);
+-- Super admin: username=admin password=Admin@2026 (PBKDF2-SHA256, 100k iterations)
+INSERT OR IGNORE INTO users (id, username, password_hash, salt, display_name, role) VALUES
+  (1, 'admin', 'afeb8a899b9b9ad785e25c99d9185388a2f86a689c40dd01e936e28962a6a1f0', 'a1b2c3d4e5f60718293a4b5c6d7e8f90', 'المدير العام', 'super_admin');
 
 -- Settings
 INSERT OR REPLACE INTO settings (key, value) VALUES
   ('site_name_ar', 'سرايا الألمنيوم'),
-  ('site_tagline_ar', 'حلول ألمنيوم وزجاج متكاملة بجودة عالمية'),
+  ('site_tagline_ar', 'رواد أعمال الألمنيوم والزجاج في المملكة — جودة عالمية، تصنيع محلي، وضمان يصل إلى 15 سنة.'),
   ('phone', '+966 55 000 0000'),
   ('whatsapp', '966550000000'),
-  ('email', 'info@saraya-aluminum.sa'),
-  ('address_ar', 'الرياض - حي الصناعية - شارع الأمير سلمان'),
+  ('email', 'info@saraya-alu.com'),
+  ('address_ar', 'الرياض — حي السلي، طريق الدائري الشرقي'),
   ('working_hours_ar', 'السبت - الخميس: 8 صباحاً - 9 مساءً'),
-  ('about_ar', 'سرايا الألمنيوم شركة سعودية متخصصة في تصميم وتصنيع وتركيب أعمال الألمنيوم والزجاج منذ أكثر من 15 عاماً. نفخر بتنفيذ أكثر من 500 مشروع سكني وتجاري وحكومي في مختلف مناطق المملكة، بفريق يضم أكثر من 40 مهندساً وفنياً متخصصاً، وورش مجهزة بأحدث المكائن الأوروبية. نلتزم بأعلى معايير الجودة ونقدم ضماناً يصل إلى 15 سنة.'),
-  ('instagram', 'https://instagram.com/saraya.aluminum'),
-  ('twitter', 'https://x.com/saraya_aluminum'),
-  ('snapchat', 'https://snapchat.com/add/saraya.aluminum'),
-  ('tiktok', 'https://tiktok.com/@saraya.aluminum');
+  ('about_ar', 'تأسست سرايا الألمنيوم لتكون واحدة من أبرز الشركات المتخصصة في أعمال الألمنيوم والزجاج في المملكة العربية السعودية. نمتلك مصنعاً حديثاً مجهزاً بأحدث خطوط الإنتاج الأوروبية، وفريقاً هندسياً وفنياً بخبرة تتجاوز 15 عاماً. نفخر بتنفيذ أكثر من 500 مشروع سكني وتجاري وحكومي في مختلف مناطق المملكة، ونلتزم في كل مشروع بأعلى معايير الجودة والدقة في المواعيد، مع ضمان حقيقي يصل إلى 15 سنة على منتجاتنا.'),
+  ('instagram', 'https://instagram.com/saraya.alu'),
+  ('twitter', 'https://x.com/saraya_alu'),
+  ('snapchat', ''),
+  ('tiktok', '');
+
+-- Categories
+INSERT OR IGNORE INTO categories (id, slug, name_ar, icon, sort_order) VALUES
+  (1, 'windows', 'نوافذ الألمنيوم', 'fas fa-window-restore', 1),
+  (2, 'doors', 'أبواب الألمنيوم', 'fas fa-door-open', 2),
+  (3, 'kitchens', 'مطابخ الألمنيوم', 'fas fa-kitchen-set', 3),
+  (4, 'glass', 'واجهات وأعمال الزجاج', 'fas fa-building', 4),
+  (5, 'shutters', 'شتر ورول ألمنيوم', 'fas fa-bars', 5),
+  (6, 'pergolas', 'مظلات وبرجولات', 'fas fa-umbrella-beach', 6),
+  (7, 'handrails', 'دربزينات وهاندريل', 'fas fa-stairs', 7),
+  (8, 'partitions', 'قواطع ومكاتب', 'fas fa-table-columns', 8);
+
+-- Products
+INSERT OR IGNORE INTO products (slug, category_id, name_ar, short_desc_ar, description_ar, features_ar, is_featured, status, sort_order) VALUES
+  ('sliding-window', 1, 'نوافذ سحب (جرارة)', 'نوافذ سحب عازلة للصوت والحرارة بقطاعات أوروبية', 'نوافذ سحب أفقية بقطاعات ألمنيوم أوروبية عالية الجودة، مزودة بزجاج مزدوج عازل للصوت والحرارة، ونظام إغلاق محكم يمنع تسرب الغبار والهواء. متوفرة بألوان متعددة تناسب جميع التصاميم.', '["زجاج مزدوج عازل 24 ملم","قطاعات ألمنيوم بسماكة 1.4 ملم","عزل كامل للصوت والغبار","عجلات تحمل ثقيل تدوم طويلاً","ألوان متعددة: أبيض، أسود، شامبين، خشبي"]', 1, 'published', 1),
+  ('hinged-window', 1, 'نوافذ مفصلية (قلاب)', 'نوافذ فتح مفصلي بإحكام إغلاق أوروبي', 'نوافذ مفصلية بنظام فتح داخلي أو خارجي، توفر أعلى درجات العزل والإحكام، مثالية لغرف النوم والمكاتب التي تتطلب هدوءاً تاماً.', '["إحكام إغلاق 100%","عزل حراري وصوتي فائق","اكسسوارات ألمانية أصلية","مقاومة للعوامل الجوية"]', 0, 'published', 2),
+  ('folding-door', 2, 'أبواب فولدنج (سحب وطي)', 'أبواب قابلة للطي بالكامل لفتحات واسعة', 'أبواب فولدنج تنطوي بالكامل لفتح المساحة بين الداخل والخارج، مثالية للمجالس والحدائق والاستراحات. قطاعات مقوّاة وزجاج سيكوريت آمن.', '["فتح كامل للمساحة","زجاج سيكوريت 8 ملم","نظام انزلاق ألماني سلس","تحمّل عالي للاستخدام المتكرر"]', 1, 'published', 1),
+  ('main-door', 2, 'أبواب مداخل رئيسية', 'أبواب مداخل فاخرة بتصاميم عصرية', 'أبواب مداخل رئيسية من الألمنيوم المقوّى بتصاميم فاخرة، متوفرة بأنماط عصرية وكلاسيكية مع خيارات إضاءة LED مدمجة وأقفال ذكية.', '["قطاعات مقوّاة ضد الكسر","خيار قفل ذكي ببصمة","إضاءة LED مدمجة","ألوان وتشطيبات فاخرة"]', 1, 'published', 2),
+  ('aluminum-kitchen', 3, 'مطابخ ألمنيوم عصرية', 'مطابخ ألمنيوم ضد الماء والحرارة بتصاميم مودرن', 'مطابخ ألمنيوم كاملة مقاومة للماء والحرارة والصدأ، بتصاميم عصرية وخامات إيطالية، مع إكسسوارات تخزين ذكية وضمان طويل.', '["مقاومة 100% للماء والرطوبة","لا تتأثر بالحرارة ولا تصدأ","إكسسوارات تخزين إيطالية","تفصيل حسب المقاس والتصميم","ضمان 15 سنة"]', 1, 'published', 1),
+  ('curtain-wall', 4, 'واجهات كرتن وول', 'واجهات زجاجية معمارية للمباني التجارية', 'واجهات كرتن وول زجاجية للأبراج والمباني التجارية بنظام إنشائي متكامل، زجاج عاكس وعازل حراري بمواصفات عالمية.', '["زجاج دبل عازل حراري","تصميم إنشائي معتمد","مقاومة رياح وأتربة عالية","تنفيذ لجميع الارتفاعات"]', 1, 'published', 1),
+  ('shower-glass', 4, 'كبائن شاور زجاجية', 'كبائن استحمام زجاج سيكوريت فاخرة', 'كبائن شاور من زجاج السيكوريت الآمن بسماكة 8-10 ملم، بإكسسوارات ستانلس ستيل ضد الصدأ وتصاميم متعددة (ركنة، جرار، مفصلي).', '["زجاج سيكوريت آمن 8-10 ملم","إكسسوارات ستانلس 304","تصاميم متعددة حسب الحمام","تركيب محكم ضد التسريب"]', 0, 'published', 2),
+  ('rolling-shutter', 5, 'رول شتر كهربائي', 'شتر ألمنيوم كهربائي بريموت للنوافذ والمحلات', 'رول شتر ألمنيوم يعمل بالكهرباء مع ريموت تحكم، يوفر حماية أمنية وعزل حراري وتعتيم كامل، مناسب للفلل والمحلات التجارية.', '["تشغيل كهربائي بريموت","تعتيم وعزل كامل","حماية أمنية إضافية","خيار التشغيل اليدوي عند انقطاع الكهرباء"]', 0, 'published', 1),
+  ('car-shade', 6, 'مظلات سيارات', 'مظلات سيارات ألمنيوم بتصاميم حديثة', 'مظلات سيارات بهيكل ألمنيوم متين وتغطية ألواح عازلة للحرارة، تصاميم عصرية تضيف لمسة جمالية للمنزل مع حماية كاملة للسيارات.', '["هيكل ألمنيوم لا يصدأ","ألواح عازلة للحرارة","تصاميم عصرية متعددة","ضمان ضد عوامل الطقس"]', 0, 'published', 1),
+  ('pergola', 6, 'برجولات جلسات خارجية', 'برجولات ألمنيوم للحدائق والأسطح', 'برجولات ألمنيوم للجلسات الخارجية بخيارات سقف ثابت أو متحرك، مقاومة للعوامل الجوية ولا تحتاج صيانة، بألوان خشبية فاخرة.', '["سقف ثابت أو متحرك بريموت","شكل خشبي فاخر بدون صيانة","إضاءة مدمجة اختيارية","تفصيل حسب المساحة"]', 1, 'published', 2),
+  ('glass-handrail', 7, 'دربزين زجاج ب ستانلس', 'دربزينات زجاجية للأدراج والبلكونات', 'دربزينات زجاج سيكوريت مع قواعد ستانلس ستيل أو ألمنيوم، تصميم عصري يعطي إحساساً بالاتساع مع أعلى معايير الأمان.', '["زجاج سيكوريت 10-12 ملم","قواعد ستانلس 316 ضد الصدأ","تصميم عصري مفتوح","معايير أمان عالية"]', 0, 'published', 1),
+  ('office-partition', 8, 'قواطع مكاتب زجاجية', 'قواطع زجاج مفردة ومزدوجة مع أبواب', 'قواطع مكاتب زجاجية بإطارات ألمنيوم أنيقة، خيارات زجاج مفرد أو مزدوج مع ستائر داخلية، عزل صوتي ممتاز لبيئة عمل احترافية.', '["زجاج مفرد أو مزدوج","ستائر مدمجة داخل الزجاج","عزل صوتي ممتاز","تركيب سريع ونظيف"]', 0, 'published', 1);
+
+-- Services
+INSERT OR IGNORE INTO services (title_ar, description_ar, icon, sort_order) VALUES
+  ('استشارة ورفع مقاسات مجاني', 'يزورك مهندسنا في الموقع لرفع المقاسات بدقة وتقديم الاستشارة الفنية المناسبة لاحتياجك وميزانيتك — مجاناً وبدون التزام.', 'fas fa-ruler-combined', 1),
+  ('تصميم وتصنيع حسب الطلب', 'نصمم ونصنّع في مصنعنا المحلي بخطوط إنتاج أوروبية حديثة، بما يطابق المقاسات والتصميم المعتمد بدقة عالية.', 'fas fa-industry', 2),
+  ('التوريد والتركيب', 'فرق تركيب متخصصة تنجز العمل بسرعة واحترافية ونظافة تامة، مع الالتزام الكامل بالمواعيد المتفق عليها.', 'fas fa-truck-fast', 3),
+  ('الصيانة وخدمة ما بعد البيع', 'خدمة صيانة دورية وطارئة لجميع منتجاتنا، وقطع غيار أصلية متوفرة دائماً، مع ضمان يصل إلى 15 سنة.', 'fas fa-screwdriver-wrench', 4);
+
+-- Projects
+INSERT OR IGNORE INTO projects (title_ar, description_ar, city_ar, project_type, year, is_featured, sort_order) VALUES
+  ('فيلا سكنية فاخرة — حي النرجس', 'توريد وتركيب كامل النوافذ والأبواب ودربزين الدرج الزجاجي ومطبخ ألمنيوم.', 'الرياض', 'residential', 2025, 1, 1),
+  ('برج مكاتب تجاري', 'واجهات كرتن وول زجاجية بمساحة 4,500 م2 مع قواطع مكاتب داخلية.', 'جدة', 'commercial', 2025, 1, 2),
+  ('مجمع فلل — حي الياسمين', 'تنفيذ نوافذ وأبواب 12 فيلا مع مظلات سيارات وبرجولات خارجية.', 'الرياض', 'residential', 2024, 1, 3),
+  ('مبنى إداري حكومي', 'واجهات زجاجية وقواطع داخلية وأبواب أوتوماتيكية للمداخل الرئيسية.', 'الدمام', 'governmental', 2024, 1, 4),
+  ('استراحة ومجلس خارجي', 'أبواب فولدنج بفتحات واسعة مع برجولا متحركة وجلسات زجاجية.', 'القصيم', 'residential', 2025, 0, 5),
+  ('مجمع تجاري — الواجهة البحرية', 'واجهات محلات زجاجية مع رول شتر كهربائي لكامل المجمع.', 'الخبر', 'commercial', 2023, 0, 6);
+
+-- Sample lead
+INSERT OR IGNORE INTO leads (lead_type, name, phone, city, project_type, product_interest, message) VALUES
+  ('quote', 'محمد العتيبي', '0551234567', 'الرياض', 'سكني', 'نوافذ سحب (جرارة)', 'أحتاج تركيب نوافذ لفيلا جديدة، عدد 14 نافذة بمقاسات مختلفة.');
