@@ -401,7 +401,7 @@ admin.delete('/leads/:id', requirePerm('leads'), async (c) => {
   return c.json({ success: true })
 })
 
-// ══ SETTINGS (super_admin + content_manager) ══
+// ══ SETTINGS ══
 admin.get('/settings', async (c) => {
   const rows = await c.env.DB.prepare('SELECT key, value FROM settings').all<{ key: string; value: string }>()
   const settings: Record<string, string> = {}
@@ -478,7 +478,7 @@ admin.put('/users/:id', async (c) => {
   return c.json({ success: true })
 })
 
-// ══ AUDIT LOGS (super_admin only) ══
+// ══ AUDIT LOGS ══
 admin.get('/audit-logs', async (c) => {
   if (c.get('user').role !== 'super_admin') return jsonError(c, 403, 'ليس لديك صلاحية')
   const rows = await c.env.DB.prepare('SELECT * FROM audit_logs ORDER BY created_at DESC LIMIT 200').all()
