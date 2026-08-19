@@ -39,7 +39,6 @@ export async function rateLimit(db: D1Database, key: string, limit: number, wind
     await db.prepare(
       'INSERT INTO rate_limits (key, count, window_start) VALUES (?, 1, ?) ON CONFLICT(key) DO UPDATE SET count = count + 1'
     ).bind(rlKey, windowStart).run()
-    // occasional cleanup
     if (Math.random() < 0.05) {
       await db.prepare('DELETE FROM rate_limits WHERE window_start < ?').bind(now - windowSec * 3).run()
     }
