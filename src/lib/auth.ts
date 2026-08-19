@@ -18,7 +18,7 @@ export async function hashPassword(password: string): Promise<string> {
   const bits = await crypto.subtle.deriveBits(
     { name: 'PBKDF2', salt, iterations: ITERATIONS, hash: 'SHA-256' }, key, 256
   )
-  return `pbkdf2$${ITERATIONS}$${bufToHex(salt.buffer)}$${bufToHex(bits)}`
+  return `pbkdf2$${ITERATIONS}$${bufToHex(salt.buffer as ArrayBuffer)}$${bufToHex(bits)}`
 }
 
 export async function verifyPassword(password: string, stored: string): Promise<boolean> {
@@ -31,7 +31,6 @@ export async function verifyPassword(password: string, stored: string): Promise<
       { name: 'PBKDF2', salt: salt as unknown as ArrayBuffer, iterations: parseInt(iterStr), hash: 'SHA-256' }, key, 256
     )
     const computed = bufToHex(bits)
-    // constant-time-ish compare
     if (computed.length !== hashHex.length) return false
     let diff = 0
     for (let i = 0; i < computed.length; i++) diff |= computed.charCodeAt(i) ^ hashHex.charCodeAt(i)
@@ -43,12 +42,12 @@ export async function verifyPassword(password: string, stored: string): Promise<
 
 export function generateSessionId(): string {
   const bytes = crypto.getRandomValues(new Uint8Array(32))
-  return bufToHex(bytes.buffer)
+  return bufToHex(bytes.buffer as ArrayBuffer)
 }
 
 export function generateRequestId(): string {
   const bytes = crypto.getRandomValues(new Uint8Array(4))
-  return 'RQ-' + Date.now().toString(36).toUpperCase() + '-' + bufToHex(bytes.buffer).slice(0, 6).toUpperCase()
+  return 'RQ-' + Date.now().toString(36).toUpperCase() + '-' + bufToHex(bytes.buffer as ArrayBuffer).slice(0, 6).toUpperCase()
 }
 
 // Role permissions
