@@ -6,8 +6,7 @@ export type AdminUser = {
   id: number
   username: string
   name: string
-  role: 'super_admin' | 'content_manager' | 'sales' | 'editor'
-  active: number
+  role: string
 }
 
 export type Variables = {
