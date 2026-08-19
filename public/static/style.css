@@ -1,1 +1,134 @@
-h1 { font-family: Arial, Helvetica, sans-serif; }
+/* Saraya Aluminum - shared styles */
+
+body { font-family: 'Tajawal', sans-serif; }
+
+/* Nav links */
+.nav-link {
+  padding: 0.6rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 700;
+  color: #475569;
+  transition: all 0.2s;
+}
+.nav-link:hover { color: #d97706; background: #fffbeb; }
+.nav-active { color: #d97706; background: #fffbeb; }
+
+/* Form inputs */
+.form-input {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border-radius: 0.75rem;
+  border: 1px solid #e2e8f0;
+  background: #fff;
+  outline: none;
+  transition: all 0.2s;
+}
+.form-input:focus {
+  border-color: #f59e0b;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15);
+}
+
+/* Product cards */
+.product-card {
+  background: #fff;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  transition: all 0.25s;
+  display: block;
+}
+.product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+}
+
+/* Category chips / filters */
+.cat-filter, .proj-filter {
+  padding: 0.55rem 1.1rem;
+  border-radius: 0.75rem;
+  font-weight: 700;
+  font-size: 0.875rem;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  color: #475569;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+.cat-filter:hover, .proj-filter:hover { border-color: #f59e0b; color: #d97706; }
+.cat-filter-active, .proj-filter-active {
+  background: #f59e0b !important;
+  border-color: #f59e0b !important;
+  color: #fff !important;
+}
+
+/* Admin sidebar nav */
+.admin-nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  width: 100%;
+  text-align: right;
+  padding: 0.7rem 0.9rem;
+  border-radius: 0.65rem;
+  font-weight: 700;
+  font-size: 0.875rem;
+  color: #94a3b8;
+  transition: all 0.2s;
+}
+.admin-nav-btn:hover { background: #1e293b; color: #fff; }
+.admin-nav-active { background: #1e293b; color: #fbbf24 !important; }
+
+/* Admin tables */
+.admin-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+.admin-table th {
+  text-align: right;
+  padding: 0.75rem 1rem;
+  background: #f8fafc;
+  color: #64748b;
+  font-weight: 700;
+  border-bottom: 1px solid #e2e8f0;
+  white-space: nowrap;
+}
+.admin-table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: middle;
+}
+.admin-table tr:hover td { background: #f8fafc; }
+
+/* Badges */
+.badge { display: inline-block; padding: 0.2rem 0.7rem; border-radius: 999px; font-size: 0.75rem; font-weight: 700; }
+.badge-new { background: #fee2e2; color: #dc2626; }
+.badge-contacted { background: #fef3c7; color: #d97706; }
+.badge-quoted { background: #dbeafe; color: #2563eb; }
+.badge-won { background: #d1fae5; color: #059669; }
+.badge-lost { background: #f1f5f9; color: #64748b; }
+.badge-published { background: #d1fae5; color: #059669; }
+.badge-draft { background: #fef3c7; color: #d97706; }
+.badge-archived { background: #f1f5f9; color: #64748b; }
+
+/* Hero slide */
+.hero-slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 1s ease;
+  background-size: cover;
+  background-position: center;
+}
+.hero-slide.active { opacity: 1; }
+.hero-dot {
+  width: 10px; height: 10px; border-radius: 999px;
+  background: rgba(255,255,255,0.4);
+  cursor: pointer; transition: all 0.3s;
+}
+.hero-dot.active { background: #f59e0b; width: 26px; }
+
+/* Small action buttons */
+.btn-icon {
+  width: 2.1rem; height: 2.1rem;
+  border-radius: 0.5rem;
+  display: inline-flex; align-items: center; justify-content: center;
+  transition: all 0.15s;
+  font-size: 0.8rem;
+}
