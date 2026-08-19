@@ -1,56 +1,87 @@
 import { Hono } from 'hono'
-import type { Bindings, Variables } from './types'
-import authRoutes from './routes/auth'
-import publicApi from './routes/public-api'
-import adminApi from './routes/admin-api'
-import { publicLayout } from './pages/layout'
-import { adminPage } from './pages/admin-page'
-import {
-  homePage, productsPage, productDetailPage, servicesPage,
-  projectsPage, projectDetailPage, aboutPage, contactPage, quotePage
-} from './pages/public-pages'
+import type { Bindings } from './auth'
+import apiPublic from './api-public'
+import apiAdmin from './api-admin'
+import { renderPage } from './layout'
+import { homePage, productsPage, productDetailPage, servicesPage, projectsPage, aboutPage, contactPage, quotePage } from './pages'
+import { adminPage } from './admin-page'
 
-const app = new Hono<{ Bindings: Bindings; Variables: Variables }>()
+const app = new Hono<{ Bindings: Bindings }>()
 
-// Security headers
-app.use('*', async (c, next) => {
-  await next()
-  c.header('X-Content-Type-Options', 'nosniff')
-  c.header('X-Frame-Options', 'SAMEORIGIN')
-  c.header('Referrer-Policy', 'strict-origin-when-cross-origin')
-})
+// APIs
+app.route('/api', apiPublic)
+app.route('/api/admin', apiAdmin)
 
-// ── APIs ──
-app.route('/api/auth', authRoutes)
-app.route('/api/admin', adminApi)
-app.route('/api', publicApi)
+// Public pages
+app.get('/', (c) => c.html(renderPage({
+  title: 'الرئيسية',
+  description: 'سرايا الألمنيوم - شركة سعودية متخصصة في تصنيع وتركيب النوافذ والأبواب والواجهات الزجاجية والمطابخ والبرجولات',
+  activeNav: 'home',
+  content: homePage
+})))
 
-// ── Admin panel ──
+app.get('/products', (c) => c.html(renderPage({
+  title: 'المنتجات',
+  description: 'تصفح منتجات سرايا الألمنيوم: نوافذ، أبواب، واجهات زجاجية، مطابخ ألمنيوم، درابزين، برجولات وأكثر',
+  activeNav: 'products',
+  content: productsPage
+})))
+
+app.get('/products/:slug', (c) => c.html(renderPage({
+  title: 'تفاصيل المنتج',
+  activeNav: 'products',
+  content: productDetailPage
+})))
+
+app.get('/services', (c) => c.html(renderPage({
+  title: 'خدماتنا',
+  description: 'خدمات سرايا الألمنيوم: استشارة ورفع مقاسات مجاني، تصنيع حسب الطلب، تركيب احترافي، صيانة وضمان',
+  activeNav: 'services',
+  content: servicesPage
+})))
+
+app.get('/projects', (c) => c.html(renderPage({
+  title: 'مشاريعنا',
+  description: 'مشاريع سرايا الألمنيوم المنفذة: فلل سكنية، أبراج تجارية، مشاريع حكومية في مختلف مناطق المملكة',
+  activeNav: 'projects',
+  content: projectsPage
+})))
+
+app.get('/about', (c) => c.html(renderPage({
+  title: 'من نحن',
+  description: 'تعرف على سرايا الألمنيوم - خبرة تتجاوز 15 عاماً في تصنيع وتركيب أعمال الألمنيوم والزجاج',
+  activeNav: 'about',
+  content: aboutPage
+})))
+
+app.get('/contact', (c) => c.html(renderPage({
+  title: 'اتصل بنا',
+  description: 'تواصل مع سرايا الألمنيوم - هاتف، واتساب، بريد إلكتروني',
+  activeNav: 'contact',
+  content: contactPage
+})))
+
+app.get('/quote', (c) => c.html(renderPage({
+  title: 'اطلب عرض سعر',
+  description: 'اطلب عرض سعر مجاني من سرايا الألمنيوم - نرد عليك خلال 24 ساعة',
+  content: quotePage
+})))
+
+// Admin panel
 app.get('/admin', (c) => c.html(adminPage))
-app.get('/admin/*', (c) => c.html(adminPage))
-
-// ── Public pages ──
-app.get('/', (c) => c.html(publicLayout('الرئيسية', homePage, 'home')))
-app.get('/products', (c) => c.html(publicLayout('المنتجات', productsPage, 'products')))
-app.get('/products/:slug', (c) => c.html(publicLayout('تفاصيل المنتج', productDetailPage, 'product-detail')))
-app.get('/services', (c) => c.html(publicLayout('خدماتنا', servicesPage, 'services')))
-app.get('/projects', (c) => c.html(publicLayout('مشاريعنا', projectsPage, 'projects')))
-app.get('/projects/:slug', (c) => c.html(publicLayout('تفاصيل المشروع', projectDetailPage, 'project-detail')))
-app.get('/about', (c) => c.html(publicLayout('من نحن', aboutPage, 'about')))
-app.get('/contact', (c) => c.html(publicLayout('اتصل بنا', contactPage, 'contact')))
-app.get('/quote', (c) => c.html(publicLayout('طلب عرض سعر', quotePage, 'quote')))
 
 // 404
 app.notFound((c) => {
-  if (c.req.path.startsWith('/api/')) return c.json({ error: 'غير موجود' }, 404)
-  return c.html(publicLayout('الصفحة غير موجودة', `
-    <section class="max-w-3xl mx-auto px-4 py-24 text-center">
-      <div class="text-8xl font-black text-brand-100 mb-4">404</div>
-      <h1 class="text-2xl font-black text-brand-800 mb-3">الصفحة غير موجودة</h1>
-      <p class="text-gray-500 mb-8">عذراً، الصفحة التي تبحث عنها غير موجودة أو تم نقلها</p>
-      <a href="/" class="bg-brand-700 hover:bg-brand-800 text-white font-bold px-8 py-3 rounded-lg transition">العودة للرئيسية</a>
-    </section>
-  `, '404'), 404)
+  if (c.req.path.startsWith('/api/')) return c.json({ error: 'not_found' }, 404)
+  return c.html(renderPage({
+    title: 'الصفحة غير موجودة',
+    content: `<section class="max-w-3xl mx-auto px-4 py-24 text-center">
+      <p class="text-7xl font-black text-amber-500 mb-4">404</p>
+      <h1 class="text-2xl font-black mb-3">الصفحة غير موجودة</h1>
+      <p class="text-slate-500 mb-8">عذراً، الصفحة التي تبحث عنها غير متوفرة</p>
+      <a href="/" class="inline-block bg-amber-500 hover:bg-amber-600 text-white font-bold px-8 py-3 rounded-xl transition">العودة للرئيسية</a>
+    </section>`
+  }), 404)
 })
 
 export default app
