@@ -1,103 +1,114 @@
-// Authentication helpers using Web Crypto (Cloudflare Workers compatible)
+// Authentication & authorization utilities (Web Crypto API — Cloudflare Workers compatible)
 import type { Context, Next } from 'hono'
 import { getCookie } from 'hono/cookie'
 
-export type Bindings = { DB: D1Database }
-
-function hexToBytes(hex: string): Uint8Array {
-  const bytes = new Uint8Array(hex.length / 2)
-  for (let i = 0; i < bytes.length; i++) bytes[i] = parseInt(hex.substr(i * 2, 2), 16)
-  return bytes
+export type Bindings = {
+  DB: D1Database
 }
 
-function bytesToHex(bytes: ArrayBuffer): string {
-  return [...new Uint8Array(bytes)].map((b) => b.toString(16).padStart(2, '0')).join('')
-}
+export type Role = 'super_admin' | 'content_manager' | 'sales'
 
-export async function hashPassword(password: string): Promise<string> {
-  const salt = crypto.getRandomValues(new Uint8Array(16))
-  const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(password), 'PBKDF2', false, ['deriveBits'])
-  const bits = await crypto.subtle.deriveBits(
-    { name: 'PBKDF2', salt, iterations: 100000, hash: 'SHA-256' },
-    key,
-    256
-  )
-  return `pbkdf2$100000$${bytesToHex(salt.buffer)}$${bytesToHex(bits)}`
-}
-
-export async function verifyPassword(password: string, stored: string): Promise<boolean> {
-  try {
-    const [scheme, iterStr, saltHex, hashHex] = stored.split('$')
-    if (scheme !== 'pbkdf2') return false
-    const salt = hexToBytes(saltHex)
-    const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(password), 'PBKDF2', false, ['deriveBits'])
-    const bits = await crypto.subtle.deriveBits(
-      { name: 'PBKDF2', salt, iterations: parseInt(iterStr), hash: 'SHA-256' },
-      key,
-      256
-    )
-    return bytesToHex(bits) === hashHex
-  } catch {
-    return false
-  }
-}
-
-export function generateToken(): string {
-  const bytes = crypto.getRandomValues(new Uint8Array(32))
-  return [...bytes].map((b) => b.toString(16).padStart(2, '0')).join('')
-}
-
-export interface AdminUser {
+export interface AuthUser {
   id: number
   username: string
-  name: string
-  role: string
+  display_name: string
+  role: Role
 }
 
-export async function getSessionUser(c: Context<{ Bindings: Bindings }>): Promise<AdminUser | null> {
-  const token = getCookie(c, 'admin_session')
+const PBKDF2_ITERATIONS = 100000
+
+function toHex(buf: ArrayBuffer): string {
+  return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, '0')).join('')
+}
+
+export function randomHex(bytes: number): string {
+  const arr = new Uint8Array(bytes)
+  crypto.getRandomValues(arr)
+  return [...arr].map((b) => b.toString(16).padStart(2, '0')).join('')
+}
+
+export async function hashPassword(password: string, saltHex: string): Promise<string> {
+  const enc = new TextEncoder()
+  const keyMaterial = await crypto.subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, ['deriveBits'])
+  // salt is used as raw text bytes of the hex string (matches Node seed generation with hex-string salt)
+  const bits = await crypto.subtle.deriveBits(
+    { name: 'PBKDF2', hash: 'SHA-256', salt: enc.encode(saltHex), iterations: PBKDF2_ITERATIONS },
+    keyMaterial,
+    256
+  )
+  return toHex(bits)
+}
+
+export async function verifyPassword(password: string, saltHex: string, expectedHash: string): Promise<boolean> {
+  const hash = await hashPassword(password, saltHex)
+  if (hash.length !== expectedHash.length) return false
+  // constant-time-ish comparison
+  let diff = 0
+  for (let i = 0; i < hash.length; i++) diff |= hash.charCodeAt(i) ^ expectedHash.charCodeAt(i)
+  return diff === 0
+}
+
+export const SESSION_COOKIE = 'saraya_session'
+export const SESSION_TTL_HOURS = 24 * 7 // 7 days
+
+export async function createSession(db: D1Database, userId: number): Promise<string> {
+  const token = randomHex(32)
+  const expiresAt = new Date(Date.now() + SESSION_TTL_HOURS * 3600 * 1000).toISOString()
+  await db.prepare('INSERT INTO sessions (token, user_id, expires_at) VALUES (?, ?, ?)').bind(token, userId, expiresAt).run()
+  return token
+}
+
+export async function getSessionUser(db: D1Database, token: string): Promise<AuthUser | null> {
   if (!token) return null
-  const row = await c.env.DB.prepare(
-    `SELECT u.id, u.username, u.name, u.role FROM admin_sessions s
-     JOIN admin_users u ON u.id = s.user_id
-     WHERE s.token = ? AND s.expires_at > datetime('now') AND u.active = 1`
-  ).bind(token).first<AdminUser>()
+  const row = await db
+    .prepare(
+      `SELECT u.id, u.username, u.display_name, u.role
+       FROM sessions s JOIN users u ON u.id = s.user_id
+       WHERE s.token = ? AND s.expires_at > datetime('now') AND u.is_active = 1`
+    )
+    .bind(token)
+    .first<AuthUser>()
   return row || null
 }
 
-// Middleware: require authenticated admin
-export async function requireAuth(c: Context<{ Bindings: Bindings; Variables: { user: AdminUser } }>, next: Next) {
-  const user = await getSessionUser(c as any)
-  if (!user) return c.json({ error: 'unauthorized' }, 401)
-  c.set('user', user)
-  await next()
+export async function destroySession(db: D1Database, token: string): Promise<void> {
+  await db.prepare('DELETE FROM sessions WHERE token = ?').bind(token).run()
 }
 
-// Middleware factory: require one of roles (super_admin always allowed)
-export function requireRole(...roles: string[]) {
-  return async (c: Context<{ Bindings: Bindings; Variables: { user: AdminUser } }>, next: Next) => {
-    const user = c.get('user')
+// Middleware: require any authenticated admin user
+export function requireAuth() {
+  return async (c: Context<{ Bindings: Bindings; Variables: { user: AuthUser } }>, next: Next) => {
+    const token = getCookie(c, SESSION_COOKIE) || ''
+    const user = await getSessionUser(c.env.DB, token)
     if (!user) return c.json({ error: 'unauthorized' }, 401)
-    if (user.role !== 'super_admin' && !roles.includes(user.role)) {
-      return c.json({ error: 'forbidden' }, 403)
-    }
+    c.set('user', user)
+    await next()
+  }
+}
+
+// Middleware: require one of the given roles
+export function requireRole(...roles: Role[]) {
+  return async (c: Context<{ Bindings: Bindings; Variables: { user: AuthUser } }>, next: Next) => {
+    const user = c.get('user')
+    if (!user || !roles.includes(user.role)) return c.json({ error: 'forbidden' }, 403)
     await next()
   }
 }
 
 export async function logAudit(
   db: D1Database,
-  user: AdminUser | null,
+  user: AuthUser | null,
   action: string,
-  entity: string,
-  entityId?: number,
+  entity?: string,
+  entityId?: string | number,
   details?: string
-) {
+): Promise<void> {
   try {
-    await db.prepare(
-      'INSERT INTO audit_logs (user_id, username, action, entity, entity_id, details) VALUES (?, ?, ?, ?, ?, ?)'
-    ).bind(user?.id ?? null, user?.username ?? 'system', action, entity, entityId ?? null, details ?? null).run()
+    await db
+      .prepare('INSERT INTO audit_log (user_id, username, action, entity, entity_id, details) VALUES (?, ?, ?, ?, ?, ?)')
+      .bind(user?.id ?? null, user?.username ?? 'anonymous', action, entity ?? null, entityId != null ? String(entityId) : null, details ?? null)
+      .run()
   } catch {
-    // non-fatal
+    // audit failures must not break requests
   }
 }
